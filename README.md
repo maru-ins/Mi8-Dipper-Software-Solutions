@@ -1,4 +1,14 @@
-# Xiaomi Mi 8 (Dipper) — Hardbrick → Instant UBL → Global ROM
+<div align="center">
+
+![Xiaomi Mi 8 Dipper Motherboard](https://static.life.ru/posts/2018/05/1122047/539056279364c0b1486be1c5d1877000.jpg)
+
+### Xiaomi Mi 8 (Dipper) — Hardbrick Recovery → Instant UBL → Global ROM
+
+*EDL / 9008 • Qualcomm SDM845 • Flashing • Instant UBL*
+
+</div>
+
+> 🖼️ Banner image: Xiaomi Mi 8 photo from [Life.ru](https://life.ru/p/1122047)
 
 Dokumentasi singkat berdasarkan proses yang berhasil saya lakukan pada **Xiaomi Mi 8 / Dipper** dari kondisi hardbrick sampai **bootloader unlock**, kemudian kembali ke Global ROM.
 
@@ -7,12 +17,12 @@ Dokumentasi singkat berdasarkan proses yang berhasil saya lakukan pada **Xiaomi 
 ## Software & file yang perlu disiapkan
 
 1. **[UnlockTool](https://unlocktool.net/)** — untuk proses EDL/9008 dan flashing. Pada percobaan saya menggunakan akses sewa sekitar 6 jam.
-2. **[Mi 8 China Fastboot V12.5.2.0.QEACNXM](https://xiaomirom.com/en/download/mi-8-dipper-stable-V12.5.2.0.QEACNXM/)** — **pilih Fastboot ROM**, bukan Recovery ROM. File yang tersedia untuk versi ini adalah `dipper_images_V12.5.2.0.QEACNXM_20211028.0000.00_10.0_cn_f4ae6b9441.tgz`. citeturn205265search7
+2. **[Mi 8 China Fastboot V12.5.2.0.QEACNXM](https://xmfirmwareupdater.com/miui/dipper/stable/V12.5.2.0.QEACNXM/)** — **pilih Fastboot ROM**, bukan Recovery ROM. File yang tersedia untuk versi ini adalah `dipper_images_V12.5.2.0.QEACNXM_20211028.0000.00_10.0_cn_f4ae6b9441.tgz`.
 3. **China firmware modifikasi untuk Instant UBL** — *File terlampir* **Jangan menggantinya dengan China ROM biasa.**
 4. **Software Instant UBL** — tool yang digunakan pada tahap unlock. *File terlampir*
-5. **[Mi 8 Global Fastboot ROM](https://xiaomirom.com/en/download/mi-8-dipper-stable-V12.0.3.0.QEAMIXM/)** — contoh yang saya gunakan adalah `V12.0.3.0.QEAMIXM`. Pastikan yang dipilih **Fastboot ROM**. citeturn205265search4
+5. **[Mi 8 Global Fastboot ROM](https://xmfirmwareupdater.com/miui/dipper/stable/V12.0.3.0.QEAMIXM/)** — contoh yang saya gunakan adalah `V12.0.3.0.QEAMIXM`. Pastikan yang dipilih **Fastboot ROM**. 
 6. **Qualcomm HS-USB QDLoader 9008 Driver** — agar perangkat terbaca saat EDL. *File terlampir*
-7. **[Minimal Adb and Fastboot Devices](https://www.droidthunder.com/minimal-adb-and-fastboot/)** - opsional
+7. **[Minimal Adb and Fastboot Devices](https://www.droidthunder.com/minimal-adb-and-fastboot/)](https://www.mediafire.com/file/1g634wggkh4kw7k/minimal_adb_fastboot_v1.4.3.zip/file)** - opsional
 
 > Saya sarankan semua file diekstrak dan diletakkan di **Desktop** terlebih dahulu. Secara praktik ini membuat path lebih pendek dan pemilihan folder di tool lebih mudah, terutama saat proses flash.
 
