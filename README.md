@@ -1,644 +1,70 @@
-# Xiaomi Mi 8 (Dipper) --- Hardbrick Recovery & Instant UBL
+# Xiaomi Mi 8 (Dipper) — Hardbrick → Instant UBL → Global ROM
 
-Dokumentasi recovery **Xiaomi Mi 8 (Dipper)** dari kondisi
-hardbrick/stuck boot sampai perangkat dapat digunakan kembali, sekaligus
-proses **Instant UBL (Unlock Bootloader)**.
+Dokumentasi singkat berdasarkan proses yang berhasil saya lakukan pada **Xiaomi Mi 8 / Dipper** dari kondisi hardbrick sampai **bootloader unlock**, kemudian kembali ke Global ROM.
 
-> **Status:** Dokumentasi berdasarkan prosedur yang berhasil dilakukan
-> pada perangkat Mi 8 Snapdragon 845 (SDM845).
->
-> **Catatan:** Nama file, versi firmware, dan hasil tiap perangkat dapat
-> berbeda. Jangan menjalankan proses erase/flash secara sembarangan,
-> terutama pada EFS/modem.
+> **Catatan:** Gunakan hanya file untuk Mi 8 (`dipper`). Proses flashing dan modifikasi bootloader memiliki risiko brick atau kehilangan data.
 
-------------------------------------------------------------------------
+## Software & file yang perlu disiapkan
 
-## 1. Device Information
+1. **[UnlockTool](https://unlocktool.net/)** — untuk proses EDL/9008 dan flashing. Pada percobaan saya menggunakan akses sewa sekitar 6 jam.
+2. **[Mi 8 China Fastboot V12.5.2.0.QEACNXM](https://xiaomirom.com/en/download/mi-8-dipper-stable-V12.5.2.0.QEACNXM/)** — **pilih Fastboot ROM**, bukan Recovery ROM. File yang tersedia untuk versi ini adalah `dipper_images_V12.5.2.0.QEACNXM_20211028.0000.00_10.0_cn_f4ae6b9441.tgz`. citeturn205265search7
+3. **China firmware modifikasi untuk Instant UBL** — gunakan file dari sumber/metode Instant UBL yang kamu gunakan. **Jangan menggantinya dengan China ROM biasa.**
+4. **Software Instant UBL** — tool yang digunakan pada tahap unlock.
+5. **[Mi 8 Global Fastboot ROM](https://xiaomirom.com/en/download/mi-8-dipper-stable-V12.0.3.0.QEAMIXM/)** — contoh yang saya gunakan adalah `V12.0.3.0.QEAMIXM`. Pastikan yang dipilih **Fastboot ROM**. citeturn205265search4
+6. **Qualcomm HS-USB QDLoader 9008 Driver** — agar perangkat terbaca saat EDL.
 
-  Item                      Value
-  ------------------------- ----------------------------------
-  Device                    Xiaomi Mi 8
-  Codename                  `dipper`
-  SoC                       Qualcomm Snapdragon 845 / SDM845
-  Storage                   UFS
-  Recovery Interface        Qualcomm EDL / 9008
-  Service Tool              UnlockTool
-  Firmware yang digunakan   MIUI 12.0.3.0.QEAMIXM
-  Android base              Android 10
+> Saya sarankan semua file diekstrak dan diletakkan di **Desktop** terlebih dahulu. Secara praktik ini membuat path lebih pendek dan pemilihan folder di tool lebih mudah, terutama saat proses flash.
 
-------------------------------------------------------------------------
+## Proses
 
-## 2. Kondisi Awal
+**1. Masukkan Mi 8 ke EDL/9008** menggunakan Test Point. Di Device Manager pastikan terbaca sebagai `Qualcomm HS-USB QDLoader 9008 (COMxx)`.
 
-Gejala perangkat sebelum recovery:
+**2. Flash China ROM pertama.** Buka **UnlockTool → Snapdragon/Qualcomm → Mi 8**, pilih folder ROM China yang sudah diekstrak, masuk ke folder `images`, lalu **Load** dan **Flash**. Tunggu sampai selesai.
 
--   Stuck pada logo **MI**.
--   Perangkat mengalami **glitch hijau** sebelum mati.
--   Perangkat kemudian tidak dapat boot normal.
--   Recovery/Fastboot tidak dapat digunakan secara normal.
--   Perangkat dapat masuk ke **Qualcomm EDL 9008** melalui test point.
--   Pada percobaan awal, koneksi Sahara/Firehose dapat mengalami
-    kegagalan.
+**3. Masuk EDL lagi.** Setelah flash pertama selesai, kembalikan HP ke mode EDL/9008.
 
-Contoh error yang muncul:
+**4. Flash China firmware khusus Instant UBL.** Di UnlockTool pilih lagi **Mi 8**, arahkan ke firmware China yang sudah dimodifikasi untuk Instant UBL, pilih folder `images`, **Load**, lalu **Flash** sampai selesai.
 
-``` text
-Handshaking... FAIL
-[Sahara] Reading Hello - Failed to handshake with device PBL!
-Trying to connect to FIREHOSE Mode!
-Connecting to flash programmer... FAIL
-Waiting for response timeout!
-```
+**5. Masuk Fastboot dan jalankan Instant UBL.** Setelah flash kedua selesai, masuk Fastboot. Buka software Instant UBL, klik **Scan Device** di kiri bawah, tunggu device terbaca, lalu klik tombol proses di bagian kanan dan tunggu sampai selesai.
 
-Error tersebut menunjukkan bahwa perangkat sudah terdeteksi pada
-Qualcomm 9008, tetapi komunikasi **Sahara → PBL** belum berhasil.
+**6. Verifikasi UBL.** Setelah sukses, HP dapat terlihat masih stuck di logo MI. Jangan langsung menganggap gagal; masuk kembali ke Fastboot dan cek status unlock, misalnya dengan `fastboot getvar unlocked`. Targetnya adalah status **UNLOCKED / unlocked: yes**.
 
-------------------------------------------------------------------------
+**7. Flash Global ROM.** Setelah UBL berhasil, tetap di Fastboot lalu buka **UnlockTool** atau **MiFlashTool**. Pilih **Global Fastboot ROM** yang sesuai untuk Mi 8, Load/Select firmware, lalu Flash sampai selesai. Setelah itu reboot dan tunggu boot pertama.
 
-# 3. Files & Tools Used
+## Alur singkat
 
-## 3.1 UnlockTool
-
-Tool utama yang digunakan untuk komunikasi Qualcomm EDL dan proses
-recovery.
-
-Contoh versi:
-
-``` text
-UnlockTool 2026.08.16.0
-```
-
-> Gunakan versi UnlockTool yang mendukung Mi 8 / SDM845 dan operasi EDL
-> yang diperlukan.
-
-------------------------------------------------------------------------
-
-## 3.2 Xiaomi Mi 8 Fastboot Firmware
-
-Firmware yang digunakan:
-
-``` text
-dipper_global_images_V12.0.3.0.QEAMIXM_20211213.0000.00_10.0_global
-```
-
-Firmware ini digunakan sebagai sumber file flashing Mi 8.
-
-Struktur penting yang biasanya terdapat di dalam firmware Qualcomm:
-
-``` text
-images/
-├── rawprogram0.xml
-├── rawprogram1.xml
-├── rawprogram2.xml
-├── patch0.xml
-├── prog_ufs_firehose_sdm845_ddr.elf
-├── xbl_a.img
-├── xbl_b.img
-├── abl_a.img
-├── abl_b.img
-├── boot.img
-├── vendor.img
-├── system.img
-└── ...
-```
-
-**PENTING:** Jangan mengganti Firehose dengan file dari device lain
-walaupun sama-sama menggunakan Snapdragon 845.
-
-------------------------------------------------------------------------
-
-## 3.3 Qualcomm Firehose
-
-Firehose yang digunakan pada proses ini:
-
-``` text
-prog_ufs_firehose_sdm845_ddr.elf
-```
-
-Firehose berfungsi sebagai flash programmer setelah komunikasi Sahara
-berhasil.
-
-Alur sederhananya:
-
-``` text
-PC
- │
- ▼
-Qualcomm 9008 / EDL
- │
- ▼
-PBL
- │
- ▼
-Sahara
- │
- ▼
-Firehose
- │
- ▼
-UFS
- │
- ▼
-Flash / Repair
-```
-
-------------------------------------------------------------------------
-
-## 3.4 Rawprogram & Patch XML
-
-File XML dari firmware digunakan oleh tool untuk menentukan partisi dan
-file image yang akan diproses.
-
-File utama:
-
-``` text
-rawprogram0.xml
-rawprogram1.xml
-rawprogram2.xml
-patch0.xml
-```
-
-**Jangan mengedit XML secara manual kecuali benar-benar memahami
-struktur partisi Mi 8.**
-
-------------------------------------------------------------------------
-
-# 4. Hardware / Connection
-
-Yang diperlukan:
-
--   Xiaomi Mi 8 motherboard
--   USB data cable
--   PC Windows
--   Qualcomm USB driver
--   Test Point EDL Mi 8
--   UnlockTool
--   Firmware Mi 8
--   Multimeter/PSU untuk troubleshooting jika diperlukan
-
-Saat berhasil masuk EDL, Windows harus mendeteksi:
-
-``` text
-Qualcomm HS-USB QDLoader 9008 (COMxx)
-```
-
-Contoh:
-
-``` text
-Qualcomm HS-USB QDLoader 9008 (COM14)
-```
-
-> Pastikan port yang dipilih di UnlockTool adalah COM Qualcomm 9008,
-> bukan port lain seperti Bluetooth Serial.
-
-------------------------------------------------------------------------
-
-# 5. Recovery Workflow
-
-## Step 1 --- Prepare Firmware
-
-Extract firmware Mi 8:
-
-``` text
-dipper_global_images_V12.0.3.0.QEAMIXM...
-```
-
-Pastikan file berikut tersedia:
-
-``` text
-rawprogram0.xml
-rawprogram1.xml
-rawprogram2.xml
-patch0.xml
-prog_ufs_firehose_sdm845_ddr.elf
-```
-
-------------------------------------------------------------------------
-
-## Step 2 --- Install Qualcomm Driver
-
-Install:
-
-``` text
-Qualcomm HS-USB QDLoader 9008
-```
-
-Kemudian buka:
-
-``` text
-Device Manager
-```
-
-Pastikan perangkat muncul sebagai:
-
-``` text
-Qualcomm HS-USB QDLoader 9008 (COMxx)
-```
-
-------------------------------------------------------------------------
-
-## Step 3 --- Enter EDL Mode
-
-Matikan perangkat.
-
-Masuk EDL menggunakan **Mi 8 Test Point**.
-
-Setelah USB terhubung, periksa Device Manager.
-
-Target:
-
-``` text
-Qualcomm HS-USB QDLoader 9008
-```
-
-Jangan melanjutkan proses flash jika device tidak stabil atau terus
-disconnect.
-
-------------------------------------------------------------------------
-
-## Step 4 --- Open UnlockTool
-
-Buka UnlockTool.
-
-Pilih:
-
-``` text
-Brand  : Xiaomi
-Model  : Xiaomi Mi 8 [Dipper]
-Platform: Qualcomm
-```
-
-Kemudian pilih COM yang benar:
-
-``` text
-COMxx = Qualcomm HS-USB QDLoader 9008
-```
-
-Jika terdapat beberapa COM, jangan memilih:
-
-``` text
-Standard Serial over Bluetooth link
-```
-
-------------------------------------------------------------------------
-
-# 6. Sahara / Firehose Handshake
-
-Pada tahap ini UnlockTool mencoba berkomunikasi dengan PBL.
-
-Normalnya:
-
-``` text
-9008 detected
-       ↓
-Connecting to device
-       ↓
-Sahara handshake
-       ↓
-Firehose programmer
-       ↓
-UFS communication
-```
-
-Jika muncul:
-
-``` text
-[Sahara] Reading Hello - Failed to handshake with device PBL!
-```
-
-jangan langsung menyimpulkan UFS rusak.
-
-Periksa terlebih dahulu:
-
-1.  Kabel USB.
-2.  Port USB.
-3.  Qualcomm driver.
-4.  COM port.
-5.  Stabilitas EDL.
-6.  PC lain.
-7.  Koneksi test point.
-8.  Kondisi power motherboard.
-
-------------------------------------------------------------------------
-
-# 7. Flashing
-
-Setelah Sahara dan Firehose berhasil terhubung, gunakan firmware Mi 8
-yang sesuai.
-
-File XML digunakan sesuai struktur firmware:
-
-``` text
-rawprogram0.xml
-rawprogram1.xml
-rawprogram2.xml
-patch0.xml
-```
-
-Pada tahap ini **jangan melakukan erase EFS/modem secara sembarangan**.
-
-Partisi seperti:
-
-``` text
-modem
-fsg
-fsc
-persist
-efs
-```
-
-berhubungan dengan fungsi penting perangkat seperti modem, calibration,
-IMEI, dan data identitas perangkat.
-
-### Prinsip recovery
-
-Prioritaskan:
-
-``` text
-Boot-critical partitions
-        ↓
-System/vendor
-        ↓
-Boot normal
-        ↓
-UBL
-```
-
-Hindari:
-
-``` text
-Erase EFS
-Erase modem
-Format storage
-```
-
-kecuali memang diperlukan dan memiliki backup yang valid.
-
-------------------------------------------------------------------------
-
-# 8. First Boot
-
-Setelah flashing selesai:
-
-``` text
-Reboot
-```
-
-Tunggu proses boot pertama.
-
-Boot pertama setelah recovery dapat memerlukan waktu lebih lama.
-
-Periksa:
-
--   MI Logo
--   Boot animation
--   Recovery/Fastboot
--   Sistem Android
--   Touch/display
--   Wi-Fi
--   Bluetooth
--   SIM/network
--   IMEI/baseband
--   Storage
-
-------------------------------------------------------------------------
-
-# 9. Instant UBL
-
-Setelah perangkat kembali dapat berkomunikasi melalui mode yang
-diperlukan, lakukan proses **Instant UBL** menggunakan metode UnlockTool
-yang digunakan dalam recovery ini.
-
-Target akhir:
-
-``` text
-Bootloader status = UNLOCKED
-```
-
-Setelah UBL, verifikasi melalui fastboot:
-
-``` bash
-fastboot devices
-```
-
-Kemudian:
-
-``` bash
-fastboot getvar unlocked
-```
-
-atau perintah verifikasi lain yang sesuai dengan metode UBL yang
-digunakan.
-
-> **Catatan penting:** Jangan menganggap perangkat sudah UBL hanya
-> karena proses tool menampilkan `OK`. Selalu verifikasi status
-> bootloader dari perangkat/fastboot.
-
-------------------------------------------------------------------------
-
-# 10. Verification Checklist
-
-Setelah recovery:
-
--   [ ] Device dapat boot ke Android
--   [ ] Tidak stuck di logo MI
--   [ ] Tidak mengalami green glitch
--   [ ] Fastboot dapat digunakan
--   [ ] Recovery dapat digunakan
--   [ ] Wi-Fi berfungsi
--   [ ] Bluetooth berfungsi
--   [ ] SIM/network berfungsi
--   [ ] IMEI masih ada
--   [ ] Baseband terdeteksi
--   [ ] Storage terdeteksi normal
--   [ ] Bootloader menunjukkan `UNLOCKED`
--   [ ] Reboot normal
-
-------------------------------------------------------------------------
-
-# 11. Troubleshooting
-
-## Sahara FAIL
-
-``` text
-[Sahara] Reading Hello - Failed to handshake with device PBL!
-```
-
-Cek:
-
-``` text
-9008
- ↓
-Driver
- ↓
-USB cable
- ↓
-USB port
- ↓
-Test Point
- ↓
-Power
- ↓
-PC
-```
-
-Jika 9008 stabil tetapi Sahara selalu gagal pada beberapa PC, lanjutkan
-pemeriksaan hardware.
-
-------------------------------------------------------------------------
-
-## Firehose FAIL
-
-``` text
-Connecting to flash programmer... FAIL
-```
-
-Jika Sahara sudah berhasil tetapi Firehose gagal:
-
--   Pastikan Firehose sesuai dengan SDM845/Mi 8.
--   Pastikan firmware berasal dari Mi 8/dipper.
--   Pastikan tipe storage sesuai.
--   Periksa koneksi UFS.
--   Jangan menggunakan Firehose random dari device Qualcomm lain.
-
-------------------------------------------------------------------------
-
-## Device Tidak Muncul 9008
-
-Periksa:
-
-``` text
-Qualcomm Driver
-USB Cable
-Test Point
-USB Port
-Motherboard Power
-```
-
-Target:
-
-``` text
-Qualcomm HS-USB QDLoader 9008
-```
-
-------------------------------------------------------------------------
-
-# 12. Important Notes
-
-Dokumentasi ini dibuat sebagai catatan teknis untuk **Xiaomi Mi 8 /
-Dipper**.
-
-Jangan langsung menerapkan file:
-
-``` text
-Firehose
-rawprogram
-patch
-partition image
-```
-
-ke device lain hanya karena chipsetnya sama.
-
-Contoh:
-
-``` text
-SDM845 ≠ otomatis Firehose compatible
-```
-
-Gunakan file yang sesuai dengan device, codename, storage, dan kebutuhan
-repair.
-
-------------------------------------------------------------------------
-
-# 13. Files Used --- Final List
-
-Checklist file yang digunakan pada prosedur:
-
-``` text
-[✓] UnlockTool
-[✓] Qualcomm HS-USB QDLoader 9008 Driver
-[✓] Xiaomi Mi 8 Dipper Fastboot Firmware
-[✓] rawprogram0.xml
-[✓] rawprogram1.xml
-[✓] rawprogram2.xml
-[✓] patch0.xml
-[✓] prog_ufs_firehose_sdm845_ddr.elf
-[✓] USB Data Cable
-[✓] Mi 8 EDL Test Point
-```
-
-### Firmware
-
-``` text
-MIUI V12.0.3.0.QEAMIXM
-Android 10
-Codename: dipper
-SoC: Snapdragon 845 / SDM845
-```
-
-------------------------------------------------------------------------
-
-# 14. Result
-
-**Before:**
-
-``` text
-Mi 8
- ↓
-Stuck MI Logo
- ↓
-Green glitch
- ↓
-Power off
- ↓
-Unable to boot normally
-```
-
-**Recovery:**
-
-``` text
-EDL 9008
- ↓
-Qualcomm PBL / Sahara
- ↓
-Firehose
- ↓
-UFS
- ↓
-Flash firmware
- ↓
-Boot
- ↓
+```text
+Hardbrick
+   ↓
+EDL / 9008
+   ↓
+China Fastboot ROM V12.5.2.0.QEACNXM
+   ↓
+EDL lagi
+   ↓
+China Modified ROM (Instant UBL)
+   ↓
+Fastboot
+   ↓
 Instant UBL
-```
-
-**After:**
-
-``` text
-Mi 8 Dipper
-      ↓
-Recovered
-      ↓
-Booting normally
-      ↓
+   ↓
 Bootloader UNLOCKED
+   ↓
+Global Fastboot ROM
+   ↓
+Selesai
 ```
 
-------------------------------------------------------------------------
+## Troubleshooting singkat
 
-## Disclaimer
+Jika UnlockTool berhenti pada `Sahara Reading Hello - Failed to handshake with device PBL`, jangan langsung menyimpulkan UFS rusak. Cek terlebih dahulu kestabilan 9008, driver Qualcomm, kabel USB, port USB, Test Point, dan coba PC lain bila perlu.
 
-This documentation is intended for educational and repair documentation
-purposes.
+## Referensi ROM
 
-Flashing or modifying partitions can permanently damage a device or
-cause loss of data/IMEI/calibration data. Always keep a valid backup
-before modifying critical partitions.
-
-------------------------------------------------------------------------
+- **China V12.5.2.0.QEACNXM:** [Download](https://xiaomirom.com/en/download/mi-8-dipper-stable-V12.5.2.0.QEACNXM/) citeturn205265search7
+- **Global V12.0.3.0.QEAMIXM:** [Download](https://xiaomirom.com/en/download/mi-8-dipper-stable-V12.0.3.0.QEAMIXM/) citeturn205265search4
+- **Alternatif daftar ROM Mi 8:** [MiROM](https://mirom.ezbox.idv.tw/en/phone/dipper/) citeturn205265search0
 
 ## Author
 
 **Diva Lutfiando**
-
-Xiaomi Mi 8 / Dipper --- Hardbrick Recovery & Instant UBL Documentation
