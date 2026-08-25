@@ -22,7 +22,7 @@ Dokumentasi singkat berdasarkan proses yang berhasil saya lakukan pada **Xiaomi 
 4. **Software Instant UBL** — tool yang digunakan pada tahap unlock. *File terlampir*
 5. **[Mi 8 Global Fastboot ROM](https://xmfirmwareupdater.com/miui/dipper/stable/V12.0.3.0.QEAMIXM/)** — contoh yang saya gunakan adalah `V12.0.3.0.QEAMIXM`. Pastikan yang dipilih **Fastboot ROM**. 
 6. **Qualcomm HS-USB QDLoader 9008 Driver** — agar perangkat terbaca saat EDL. *File terlampir*
-7. **[Minimal Adb and Fastboot Devices](https://www.droidthunder.com/minimal-adb-and-fastboot/)](https://www.mediafire.com/file/1g634wggkh4kw7k/minimal_adb_fastboot_v1.4.3.zip/file)** - opsional
+7. **[Minimal Adb and Fastboot Devices](https://www.mediafire.com/file/1g634wggkh4kw7k/minimal_adb_fastboot_v1.4.3.zip/file)** - opsional
 
 > Saya sarankan semua file diekstrak dan diletakkan di **Desktop** terlebih dahulu. Secara praktik ini membuat path lebih pendek dan pemilihan folder di tool lebih mudah, terutama saat proses flash.
 
